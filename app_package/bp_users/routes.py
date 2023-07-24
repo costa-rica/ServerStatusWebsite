@@ -43,11 +43,11 @@ sess_users = dict_sess['sess_users']
 
 @bp_users.before_request
 def before_request():
-    logger_users.info("- in users.before_request ")
+    logger_bp_users.info("- in users.before_request ")
     session.permanent = True
     current_app.permanent_session_lifetime = datetime.timedelta(days=31)
     session.modified = True
-    logger_users.info(f"!--> current_app.permanent_session_lifetime: {current_app.permanent_session_lifetime}")
+    logger_bp_users.info(f"!--> current_app.permanent_session_lifetime: {current_app.permanent_session_lifetime}")
 
 @bp_users.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -74,7 +74,7 @@ def login():
                 if bcrypt.checkpw(password.encode(), user.password):
                     login_user(user)
 
-                    return redirect(url_for('bp_blog.blog_user_home'))
+                    return redirect(url_for('bp_main.server_syslog'))
                 else:
                     flash('Password or email incorrectly entered', 'warning')
             else:
