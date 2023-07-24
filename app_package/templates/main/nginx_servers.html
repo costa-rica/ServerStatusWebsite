@@ -8,8 +8,10 @@
         <div class="syslog_doc_div">
             <code>
                 <ul id="syslog_doc_id">
-                    {% for key,value in nginx_servers_json.items() %}
-                        <li>{{ key }} : {{ value }}</li>
+                    {% for element in nginx_servers_json_list %}
+                        {% for key,value in element.items() %}
+                            <li>{{ key }} : {{ value }}</li>
+                        {% endfor %}
                     {% endfor %}
                 </ul>
             </code>

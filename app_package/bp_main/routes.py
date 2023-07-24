@@ -1,10 +1,11 @@
 from flask import Blueprint
-from flask import render_template, send_from_directory
+from flask import render_template, send_from_directory, current_app
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
+from app_package.bp_main import read_syslog_into_list, get_nginx_info
 
 
 bp_main = Blueprint('bp_main', __name__)
@@ -47,14 +48,14 @@ def server_syslog():
         syslog_file = '/var/log/syslog'
     else:
         syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
-    sys_log_list = []
-    try:
-        with open(syslog_file, 'r') as f:
-            sys_log_list = f.readlines()
-    except FileNotFoundError:
-        print(f"{syslog_file} not found.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    sys_log_list = read_syslog_into_list(syslog_file)
+    # try:
+    #     with open(syslog_file, 'r') as f:
+    #         sys_log_list = f.readlines()
+    # except FileNotFoundError:
+    #     print(f"{syslog_file} not found.")
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
     # return sys_log_list
 
     return render_template('main/server_syslog.html', hostname=hostname,sys_log_list=sys_log_list)
@@ -70,28 +71,13 @@ def nginx_servers():
     # else:
     #     syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
     if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-        # Run the command and capture the output
-        command = ["grep", "-rnE", "/etc/nginx/", "-e", "server_name", "-e", "proxy_pass"]
-        result = subprocess.run(command, capture_output=True, text=True)
-
-        # Parse the output into a list of dictionaries
-        lines = result.stdout.strip().split("\n")
-        parsed = []
-        for line in lines:
-            file, line, text = line.split(":", 2)
-            parsed.append({
-                "file": file,
-                "line": int(line),
-                "text": text.strip(),
-            })
-
-        # Serialize the parsed output to JSON
-        nginx_servers_json = json.dumps(parsed, indent=4)
+        nginx_servers_json_list = get_nginx_info()
     else:
-        nginx_servers_json = {"message":f"Not production machine: {hostname}"}
+        nginx_servers_json_list = [{"message":f"Not production machine: {hostname}"}]
 
 
-    return render_template('main/nginx_servers.html', hostname=hostname,nginx_servers_json=nginx_servers_json)
+    return render_template('main/nginx_servers.html', 
+        hostname=hostname,nginx_servers_json_list=nginx_servers_json_list)
 
 
 
