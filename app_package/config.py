@@ -1,7 +1,7 @@
 import os
 from ss_config import ConfigLocal, ConfigDev, ConfigProd
 
-match os.environ.get('FLASK_ENV'):
+match os.environ.get('FLASK_CONFIG_TYPE'):
     case 'dev':
         config = ConfigDev()
         print('- exFlaskBlueprintFrameworkStarterWithLogin/app_pacakge/config: Development')
