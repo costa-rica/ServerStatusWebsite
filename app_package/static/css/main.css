@@ -11874,9 +11874,20 @@ section.about_main a:hover {
 }
 
 /* Sys Log Page */
-.sys_log_page .code {
-  font-size: small;
+.sys_log_page .syslog_doc_div {
   background-color: black;
+  padding: 1rem;
+}
+.sys_log_page code {
+  font-size: 0.6rem;
+}
+.sys_log_page ul#syslog_doc_id {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.sys_log_page ul#syslog_doc_id li {
+  margin: 0.1em 0; /* Adjust this value for desired spacing */
 }
 
 @media screen and (min-width: 768px) {

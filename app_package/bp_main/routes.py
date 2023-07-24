@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask import render_template
+from flask import render_template, send_from_directory
 import os
 import logging
 from logging.handlers import RotatingFileHandler
@@ -42,8 +42,10 @@ def server_syslog():
     logger_bp_main.info(f"- in server_syslog route")
     
     hostname = socket.gethostname()
-
-    syslog_file = '/var/log/syslog'
+    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
+        syslog_file = '/var/log/syslog'
+    else:
+        syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
     sys_log_list = []
     try:
         with open(syslog_file, 'r') as f:
@@ -55,5 +57,56 @@ def server_syslog():
     # return sys_log_list
 
     return render_template('main/server_syslog.html', hostname=hostname,sys_log_list=sys_log_list)
+
+
+@bp_main.route('/nginx_servers')
+def nginx_servers():
+    logger_bp_main.info(f"- in nginx_servers route")
+    
+    hostname = socket.gethostname()
+    # if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
+    #     syslog_file = '/var/log/syslog'
+    # else:
+    #     syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
+        # Run the command and capture the output
+        command = ["grep", "-rnE", "/etc/nginx/", "-e", "server_name", "-e", "proxy_pass"]
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        # Parse the output into a list of dictionaries
+        lines = result.stdout.strip().split("\n")
+        parsed = []
+        for line in lines:
+            file, line, text = line.split(":", 2)
+            parsed.append({
+                "file": file,
+                "line": int(line),
+                "text": text.strip(),
+            })
+
+        # Serialize the parsed output to JSON
+        nginx_servers_json = json.dumps(parsed, indent=4)
+    else:
+        nginx_servers_json = {"message":f"Not production machine: {hostname}"}
+
+
+    return render_template('main/nginx_servers.html', hostname=hostname,nginx_servers_json=nginx_servers_json)
+
+
+
+@bp_main.route('/running_services')
+def running_services():
+    logger_bp_main.info(f"- in running_services_list route")
+    
+    hostname = socket.gethostname()
+    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
+        syslog_file = '/var/log/syslog'
+    else:
+        syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+
+ 
+
+
+    return render_template('main/running_services.html', hostname=hostname,running_services_list=running_services_list)
 
 

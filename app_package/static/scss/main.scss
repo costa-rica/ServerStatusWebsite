@@ -244,9 +244,21 @@ section.about_main{
 
 /* Sys Log Page */
 .sys_log_page{
-  .code {
-    font-size: small;
+  .syslog_doc_div{
     background-color: black;
+    padding: 1rem;
+
+  }
+  code {
+    font-size: .6rem;
+  }
+  ul#syslog_doc_id {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul#syslog_doc_id li {
+      margin: 0.1em 0;  /* Adjust this value for desired spacing */
   }
 
 }
