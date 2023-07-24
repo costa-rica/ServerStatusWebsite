@@ -1,9 +1,19 @@
 {% extends "_layout.html" %}
 {% block main %}
 
-<h1>Home</h1>
+<div class="space_for_navbar_and_footer flex_center">
+    <div class="home_page">
+        <h1>Server Status for {{ hostname }}</h1>
 
-<h2>Flask Started Updated June 30, 2023</h2>
+        <div class="hero_center">
+            <!-- <img src="{{ url_for('static', filename='images/homepage/shiftgarten.png') }}" alt="Shiftgarten Login"> -->
+            <img
+                src="{{ url_for('bp_main.get_aux_file_from_dir', aux_dir_name='images_people', filename= 'UbuntuCoF.svg') }}">
+        </div>
+    </div>
+
+</div>
+
 
 
 {% endblock %}

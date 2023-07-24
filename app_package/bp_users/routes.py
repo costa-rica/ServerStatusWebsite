@@ -109,6 +109,9 @@ def register():
     if request.method == 'POST':
         formDict = request.form.to_dict()
         new_email = formDict.get('email')
+        if new_email not in current_app.config.get('ADMIN_EMAILS'):
+            flash(f'Register not permitted', 'warning')
+            return redirect(url_for('bp_main.home'))
 
         check_email = sess_users.query(Users).filter_by(email = new_email).all()
 
