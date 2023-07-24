@@ -5,7 +5,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
-from app_package.bp_main import read_syslog_into_list, get_nginx_info
+from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info
 
 
 bp_main = Blueprint('bp_main', __name__)
