@@ -11873,6 +11873,12 @@ section.about_main a:hover {
   color: var(--website_theme_fun_color);
 }
 
+/* Sys Log Page */
+.sys_log_page .code {
+  font-size: small;
+  background-color: black;
+}
+
 @media screen and (min-width: 768px) {
   .home_page .hero_top {
     flex-wrap: nowrap;

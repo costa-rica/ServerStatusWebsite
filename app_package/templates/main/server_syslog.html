@@ -4,8 +4,12 @@
 <div class="space_for_navbar_and_footer">
     <h1>System Log File for {{ hostname }}</h1>
 
+    <code>
+        {% for row in sys_log_list %}
+        {{ row }}<br/>
+        {% endfor %}
+    </code>
 
-    {{ sys_log_list }}
 
 </div>
 
