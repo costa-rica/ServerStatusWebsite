@@ -128,7 +128,7 @@ def services_df(directory):
 def get_services():
     # try:
     # Execute the command and get the output
-    cmd = 'systemctl --type=service'
+    cmd = '/bin/systemctl --type=service'
     result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
 
     # Split the output into lines
