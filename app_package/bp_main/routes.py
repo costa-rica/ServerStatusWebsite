@@ -6,7 +6,7 @@ from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
-    services_df
+    services_df, get_services
 from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
@@ -105,15 +105,14 @@ def running_services():
     logger_bp_main.info(f"- in running_services_list route")
     
     hostname = socket.gethostname()
-    # if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-    #     syslog_file = '/var/log/syslog'
-    # else:
-    #     syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+
     directory = "/etc/systemd/system"
     if os.environ.get('FLASK_CONFIG_TYPE') == "local":
         directory = current_app.config.get('LOCAL_TEST_DATA_PATH') + directory 
         
-    df = services_df(directory)
+    # df = services_df(directory)
+    # df_dict = df.to_dict('records')
+    df = get_services()
     df_dict = df.to_dict('records')
 
     return render_template('main/running_services.html', hostname=hostname,

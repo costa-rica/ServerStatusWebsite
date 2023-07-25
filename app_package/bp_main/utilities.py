@@ -123,3 +123,26 @@ def services_df(directory):
     # # Print the DataFrame
     # print(df)
     return df
+
+
+def get_services():
+    try:
+        # Execute the command and get the output
+        cmd = 'sudo systemctl --type=service'
+        result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
+
+        # Split the output into lines
+        lines = result.strip().split('\n')
+
+        # Split each line into columns and remove unnecessary whitespace
+        data = [line.split() for line in lines]
+
+        # Convert the list of lists into a DataFrame
+        df = pd.DataFrame(data)
+
+        return df
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return None
+
