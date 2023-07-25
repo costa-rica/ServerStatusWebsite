@@ -126,23 +126,31 @@ def services_df(directory):
 
 
 def get_services():
-    # try:
-    # Execute the command and get the output
     cmd = '/bin/systemctl --type=service'
     result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
 
     # Split the output into lines
     lines = result.strip().split('\n')
-    print("-- lines --")
-    print(lines)
-    print("------------")
 
-    # Split each line into columns and remove unnecessary whitespace
-    data = [line.split() for line in lines]
+    # Skip the first line (header) and last two lines (load information)
+    lines = lines[1:-2]
+
+    # Split each line into columns based on whitespace
+    data = []
+    for line in lines:
+        # Split the line into words
+        words = line.split()
+
+        # The first three columns are always single words
+        unit, load, sub = words[:3]
+
+        # The remaining words belong to the description, which can contain spaces
+        description = ' '.join(words[3:])
+
+        data.append([unit, load, sub, description])
 
     # Convert the list of lists into a DataFrame
-    df = pd.DataFrame(data)
-    print(df)
+    df = pd.DataFrame(data, columns=['Unit', 'Load', 'Sub', 'Description'])
 
     return df
 
