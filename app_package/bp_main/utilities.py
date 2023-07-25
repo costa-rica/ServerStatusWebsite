@@ -105,10 +105,10 @@ def services_df(directory):
 
             # Get the status of the service
             try:
-                output = subprocess.check_output(["systemctl", "is-active", filename], universal_newlines=True)
+                output = subprocess.check_output(["sudo", "systemctl", "is-active", filename], universal_newlines=True)
                 statuses.append(output.strip())
             except subprocess.CalledProcessError as e:
-                statuses.append("unknown")
+                statuses.append(e)
             except:
                 statuses.append("unknown")
 
