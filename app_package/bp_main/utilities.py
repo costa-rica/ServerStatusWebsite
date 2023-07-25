@@ -138,8 +138,10 @@ def get_services():
     # Split each line into columns based on whitespace
     data = []
     for line in lines:
+
         # Split the line into words
         words = line.split()
+        print(words)
 
         # The first three columns are always single words
         unit, load, sub = words[:3]
