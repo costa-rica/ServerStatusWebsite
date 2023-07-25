@@ -19,10 +19,10 @@
                 <tbody>
                     {% for row in df_dict %}
                     <tr>
-                        <td>{{ row['Filename'] }}</td>
-                        <td>{{ row['User'] }}</td>
-                        <td>{{ row['ExecStart'] }}</td>
-                        <td>{{ row['Status'] }}</td>
+                        <td>{{ row['Unit'] }}</td>
+                        <td>{{ row['Load'] }}</td>
+                        <td>{{ row['Sub'] }}</td>
+                        <td>{{ row['Description'] }}</td>
                     </tr>
                 {% endfor %}
     
@@ -43,5 +43,5 @@
       $('#table_id').DataTable();
     });
     </script>
-    
+
 {% endblock %}

@@ -128,35 +128,36 @@ def services_df(directory):
 def get_services():
     cmd = '/bin/systemctl --type=service'
     result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
-
-    # Split the output into lines
     lines = result.strip().split('\n')
-
-    # Skip the first line (header) and last two lines (load information)
-    lines = lines[2:-2]
-
-    # Split each line into columns based on whitespace
     data = []
     for line in lines:
+        print("----")
+        print(line)
+        # Stop processing if we encounter the "LOAD =" row
+        if line.startswith("LOAD   ="):
+            break
+
+        # Skip the line if it starts with '●'
+        if line.startswith('●'):
+            line = line[1:]
 
         # Split the line into words
         words = line.split()
-        print(words)
 
-        # The first three columns are always single words
-        unit, load, sub = words[:3]
+        try:
+            # The first three columns are always single words
+            unit, load, sub = words[:3]
 
-        # The remaining words belong to the description, which can contain spaces
-        description = ' '.join(words[3:])
+            # The remaining words belong to the description, which can contain spaces
+            description = ' '.join(words[3:])
 
-        data.append([unit, load, sub, description])
+            data.append([unit, load, sub, description])
+        except ValueError:
+            print("Error line")
+            # print(line)
 
     # Convert the list of lists into a DataFrame
     df = pd.DataFrame(data, columns=['Unit', 'Load', 'Sub', 'Description'])
 
     return df
-
-    # except Exception as e:
-    #     print(f"Error occurred: {e}")
-    #     return None
 

@@ -11799,6 +11799,34 @@ body {
   text-align: left;
 }
 
+.running_services_page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.running_services_page .table_background_super {
+  width: calc(100% - 1rem);
+}
+.running_services_page .table_background {
+  width: 100%;
+  overflow: auto;
+}
+.running_services_page table {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.running_services_page table tr td:last-child {
+  word-wrap: break-word;
+}
+.running_services_page th, .running_services_page td {
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
 /* About */
 section.about_main {
   color: var(--website_theme_font_color_dark);
