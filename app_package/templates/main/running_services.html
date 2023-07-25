@@ -2,18 +2,34 @@
 {% block main %}
 
 <div class="space_for_navbar_and_footer">
-    <div class="sys_log_page">
+    <div class="nginx_page">
         <h1>Running Services for {{ hostname }}</h1>
 
-        <div class="syslog_doc_div">
-            <code>
-                <ul id="syslog_doc_id">
-                    {% for log in running_services_list %}
-                        <li>{{ log }}</li>
+        <div class="table_background_super">
+            <div class="table_background std_framing">
+              <table id="table_id" class="display table ">
+                <thead>
+                  <tr>
+                    {% for i in df_dict[0].keys() %}
+                    <th>{{ i }}</th>
                     {% endfor %}
-                </ul>
-            </code>
-        </div>
+    
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for row in df_dict %}
+                    <tr>
+                        <td>{{ row['Filename'] }}</td>
+                        <td>{{ row['User'] }}</td>
+                        <td>{{ row['ExecStart'] }}</td>
+                        <td>{{ row['Status'] }}</td>
+                    </tr>
+                {% endfor %}
+    
+                </tbody>
+              </table>
+            </div><!-- table_background -->
+          </div><!-- table_background_super -->
 
 
     </div>
@@ -22,5 +38,10 @@
 
 </div>
 
-
+<script type="text/javascript">
+    $(document).ready(function () {
+      $('#table_id').DataTable();
+    });
+    </script>
+    
 {% endblock %}

@@ -5,8 +5,11 @@ import logging
 from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
-from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info
+from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
+    services_df
 from flask_login import login_required, login_user, logout_user, current_user
+import glob
+import pandas as pd
 
 
 bp_main = Blueprint('bp_main', __name__)
@@ -46,19 +49,13 @@ def server_syslog():
     logger_bp_main.info(f"- in server_syslog route")
     
     hostname = socket.gethostname()
-    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-        syslog_file = '/var/log/syslog'
-    else:
-        syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+    syslog_file = '/var/log/syslog'
+
+    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+        syslog_file = current_app.config.get('LOCAL_TEST_DATA_PATH') + syslog_file
+
     sys_log_list = read_syslog_into_list(syslog_file)
-    # try:
-    #     with open(syslog_file, 'r') as f:
-    #         sys_log_list = f.readlines()
-    # except FileNotFoundError:
-    #     print(f"{syslog_file} not found.")
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    # return sys_log_list
+
 
     return render_template('main/server_syslog.html', hostname=hostname,sys_log_list=sys_log_list)
 
@@ -69,18 +66,36 @@ def nginx_servers():
     logger_bp_main.info(f"- in nginx_servers route")
     
     hostname = socket.gethostname()
+
+    conf_file_path = '/etc/nginx/conf.d/'
+
     # if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-    #     syslog_file = '/var/log/syslog'
-    # else:
-    #     syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
-    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-        nginx_servers_json_list = get_nginx_info()
-    else:
-        nginx_servers_json_list = [{"message":f"Not production machine: {hostname}"}]
+    config_files = glob.glob(conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
+    # nginx_servers_json_list = get_nginx_info(config_files)
+    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+        config_files = glob.glob(current_app.config.get('LOCAL_TEST_DATA_PATH') + conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
+        
+        # nginx_servers_json_list = [{"message":f"Not production machine: {hostname}"}]
+
+    nginx_servers_json_list = get_nginx_info(config_files)
+
+    data = {
+        "Proxy Port": [info['proxy_pass'].split(':')[-1] for info in nginx_servers_json_list],
+        "Web addresses": [', '.join(info['server_names']) for info in nginx_servers_json_list]
+    }
+
+    # create dataframe
+    df = pd.DataFrame(data)
+    # sort dataframe by "Proxy Port"
+    df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
+    df = df.sort_values("Proxy Port")
+    df_dict = df.to_dict('records')
+    print(df_dict)
 
 
     return render_template('main/nginx_servers.html', 
-        hostname=hostname,nginx_servers_json_list=nginx_servers_json_list)
+        hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
+        data=data, df_dict=df_dict)
 
 
 
@@ -90,14 +105,17 @@ def running_services():
     logger_bp_main.info(f"- in running_services_list route")
     
     hostname = socket.gethostname()
-    if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
-        syslog_file = '/var/log/syslog'
-    else:
-        syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+    # if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
+    #     syslog_file = '/var/log/syslog'
+    # else:
+    #     syslog_file = '/Users/nick/Documents/_testData/ServerStatusWebsite/syslog'
+    directory = "/etc/systemd/system"
+    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+        directory = current_app.config.get('LOCAL_TEST_DATA_PATH') + directory 
+        
+    df = services_df(directory)
+    df_dict = df.to_dict('records')
 
- 
-
-
-    return render_template('main/running_services.html', hostname=hostname,running_services_list=running_services_list)
-
+    return render_template('main/running_services.html', hostname=hostname,
+        df_dict=df_dict)
 

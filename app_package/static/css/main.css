@@ -11767,6 +11767,38 @@ body {
   max-width: 100%;
 }
 
+.nginx_page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.nginx_page .table_background_super {
+  width: calc(100% - 1rem);
+}
+.nginx_page .table_background {
+  width: 100%;
+  overflow: auto;
+}
+.nginx_page table {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.nginx_page th:nth-child(1), .nginx_page td:nth-child(1) {
+  width: min-content;
+  white-space: nowrap;
+}
+.nginx_page th:nth-child(2), .nginx_page td:nth-child(2) {
+  word-wrap: break-word;
+}
+.nginx_page th, .nginx_page td {
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
 /* About */
 section.about_main {
   color: var(--website_theme_font_color_dark);
@@ -11792,12 +11824,22 @@ section.about_main a:hover {
   margin: 0;
 }
 .sys_log_page ul#syslog_doc_id li {
-  margin: 0.1em 0; /* Adjust this value for desired spacing */
+  margin: 0.1em 0;
+  /* Adjust this value for desired spacing */
 }
 
 @media screen and (min-width: 768px) {
   .home_page {
     width: calc(100% - 5rem);
+  }
+  /* Nginx Server Status */
+  .nginx_page .table_background_super {
+    width: calc(100% - 5rem);
+    display: flex;
+    justify-content: center;
+  }
+  .nginx_page .table_background {
+    width: calc(100% - 10rem);
   }
 }
 
