@@ -6,7 +6,7 @@ from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
-    services_df, get_services
+    get_terminal_services, read_services_files, merge_and_sort_dfs
 from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
@@ -75,8 +75,6 @@ def nginx_servers():
     if os.environ.get('FLASK_CONFIG_TYPE') == "local":
         config_files = glob.glob(current_app.config.get('LOCAL_TEST_DATA_PATH') + conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
         
-        # nginx_servers_json_list = [{"message":f"Not production machine: {hostname}"}]
-
     nginx_servers_json_list = get_nginx_info(config_files)
 
     data = {
@@ -90,8 +88,6 @@ def nginx_servers():
     df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
     df = df.sort_values("Proxy Port")
     df_dict = df.to_dict('records')
-    print(df_dict)
-
 
     return render_template('main/nginx_servers.html', 
         hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
@@ -102,18 +98,33 @@ def nginx_servers():
 @bp_main.route('/running_services')
 @login_required
 def running_services():
-    logger_bp_main.info(f"- in running_services_list route")
+    logger_bp_main.info(f"- in running_services route")
     
     hostname = socket.gethostname()
 
-    directory = "/etc/systemd/system"
     if os.environ.get('FLASK_CONFIG_TYPE') == "local":
-        directory = current_app.config.get('LOCAL_TEST_DATA_PATH') + directory 
+        system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/SpeedyProd10/"
+        file_name = "system.txt"
+        file = system_file_path + "system_report01/" + file_name
+        with open(file, "r") as f:
+            services_from_terminal_data = f.read()
+
+        service_dir = system_file_path + "etc/systemd/system/"
+    else:
+        cmd = '/bin/systemctl --type=service'
+        services_from_terminal_data = subprocess.check_output(cmd, shell=True, universal_newlines=True)
+        service_dir = "/etc/systemd/system/"
         
-    # df = services_df(directory)
-    # df_dict = df.to_dict('records')
-    df = get_services()
-    df_dict = df.to_dict('records')
+
+    terminal_services_df = get_terminal_services(services_from_terminal_data)
+
+
+    service_files_df = read_services_files(service_dir)
+
+    services_df = merge_and_sort_dfs(terminal_services_df, service_files_df)
+
+
+    df_dict = services_df.to_dict('records')
 
     return render_template('main/running_services.html', hostname=hostname,
         df_dict=df_dict)

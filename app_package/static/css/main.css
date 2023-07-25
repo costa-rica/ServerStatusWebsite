@@ -11778,28 +11778,10 @@ body {
 }
 .nginx_page .table_background {
   width: 100%;
-  overflow: auto;
 }
-.nginx_page table {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.nginx_page th:nth-child(1),
-.nginx_page td:nth-child(1) {
-  width: min-content;
-  white-space: nowrap;
-}
-.nginx_page th:nth-child(2),
-.nginx_page td:nth-child(2) {
+.nginx_page table td:nth-child(2) {
+  max-width: 3rem;
   word-wrap: break-word;
-}
-.nginx_page th,
-.nginx_page td {
-  border: 1px solid #ccc;
-  text-align: left;
 }
 
 .running_services_page {
@@ -11813,23 +11795,9 @@ body {
 }
 .running_services_page .table_background {
   width: 100%;
-  overflow: auto;
 }
-.running_services_page table {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.running_services_page table tr td:not(:last-child) {
-  max-width: 4rem;
-}
-.running_services_page th,
-.running_services_page td {
-  border: 1px solid #ccc;
-  text-align: left;
-  overflow-wrap: break-word;
+.running_services_page table td:nth-child(2) {
+  max-width: 3rem;
   word-wrap: break-word;
 }
 
@@ -11868,12 +11836,20 @@ section.about_main a:hover {
   }
   /* Nginx Server Status */
   .nginx_page .table_background_super {
-    width: calc(100% - 5rem);
+    width: calc(100% - 1rem);
     display: flex;
     justify-content: center;
   }
   .nginx_page .table_background {
-    width: calc(100% - 10rem);
+    width: 80%;
+  }
+  .running_services_page .table_background_super {
+    width: calc(100% - 1rem);
+    display: flex;
+    justify-content: center;
+  }
+  .running_services_page .table_background {
+    width: 80%;
   }
 }
 

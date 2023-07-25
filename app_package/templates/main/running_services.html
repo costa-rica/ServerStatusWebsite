@@ -2,27 +2,37 @@
 {% block main %}
 
 <div class="space_for_navbar_and_footer">
-    <div class="nginx_page">
+    <div class="running_services_page">
         <h1>Running Services for {{ hostname }}</h1>
 
         <div class="table_background_super">
             <div class="table_background std_framing">
-              <table id="table_id" class="display table ">
+              <table id="table_id" class="display table responsive">
                 <thead>
                   <tr>
-                    {% for i in df_dict[0].keys() %}
-                    <th>{{ i }}</th>
-                    {% endfor %}
-    
+                    <!-- { for i in df_dict[0].keys() }
+                    <th>{ i }</th>
+                    { endfor } -->
+
+                        <th>Index</th>
+                        <th>Service File Name</th>
+                        <th>Service Port</th>
+                        <th>Status</th>
+                        <th>User</th>
+                        <th>Working Dir</th>
                   </tr>
                 </thead>
                 <tbody>
                     {% for row in df_dict %}
                     <tr>
-                        <td>{{ row['Unit'] }}</td>
-                        <td>{{ row['Load'] }}</td>
-                        <td>{{ row['Sub'] }}</td>
-                        <td>{{ row['Description'] }}</td>
+                        <td>{{ row['Index'] }}</td>
+                        <td class="max_width">{{ row['Unit'] }}</td>
+                        <td>{{ row['ExecStart'] }}</td>
+                        <td class="middle">{{ row['Sub'] }}</td>
+                        <td>{{ row['User'] }}</td>
+                        <td>{{ row['WorkingDirectory'] }}</td>
+
+                        
                     </tr>
                 {% endfor %}
     

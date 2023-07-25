@@ -66,76 +66,78 @@ def write_nginx_info_to_excel(nginx_info):
 
 
 
-def services_df(directory):
-    # The directory where service files are stored in Ubuntu
-    # directory = "/etc/systemd/system"
+# def services_df(directory):
+#     # The directory where service files are stored in Ubuntu
+#     # directory = "/etc/systemd/system"
 
-    # Lists to store the results
-    filenames = []
-    users = []
-    execstarts = []
-    statuses = []
+#     # Lists to store the results
+#     filenames = []
+#     users = []
+#     execstarts = []
+#     statuses = []
 
-    # Traverse the directory
-    for filename in os.listdir(directory):
-        if filename.endswith(".service"):
-            # Full path to the service file
-            filepath = os.path.join(directory, filename)
+#     # Traverse the directory
+#     for filename in os.listdir(directory):
+#         if filename.endswith(".service"):
+#             # Full path to the service file
+#             filepath = os.path.join(directory, filename)
             
-            user = ""
-            execstart = ""
+#             user = ""
+#             execstart = ""
 
-            # Read the service file
-            with open(filepath, "r") as file:
-                for line in file.readlines():
-                    line = line.strip()
+#             # Read the service file
+#             with open(filepath, "r") as file:
+#                 for line in file.readlines():
+#                     line = line.strip()
 
-                    # Find the User line
-                    if line.startswith("User="):
-                        user = line.split("=")[1].strip()
+#                     # Find the User line
+#                     if line.startswith("User="):
+#                         user = line.split("=")[1].strip()
 
-                    # Find the ExecStart line
-                    if line.startswith("ExecStart="):
-                        execstart = line.split("=")[1].strip()
+#                     # Find the ExecStart line
+#                     if line.startswith("ExecStart="):
+#                         execstart = line.split("=")[1].strip()
 
-            # Append the results
-            filenames.append(filename)
-            users.append(user)
-            execstarts.append(execstart)
+#             # Append the results
+#             filenames.append(filename)
+#             users.append(user)
+#             execstarts.append(execstart)
 
-            # Get the status of the service
-            try:
-                output = subprocess.check_output(["sudo", "systemctl", "is-active", filename], universal_newlines=True)
-                statuses.append(output.strip())
-            except subprocess.CalledProcessError as e:
-                statuses.append(e)
-            except:
-                statuses.append("unknown")
+#             # Get the status of the service
+#             try:
+#                 output = subprocess.check_output(["sudo", "systemctl", "is-active", filename], universal_newlines=True)
+#                 statuses.append(output.strip())
+#             except subprocess.CalledProcessError as e:
+#                 statuses.append(e)
+#             except:
+#                 statuses.append("unknown")
 
-    # Create a DataFrame
-    df = pd.DataFrame({
-        "Filename": filenames,
-        "User": users,
-        "ExecStart": execstarts,
-        "Status": statuses
-    })
+#     # Create a DataFrame
+#     df = pd.DataFrame({
+#         "Filename": filenames,
+#         "User": users,
+#         "ExecStart": execstarts,
+#         "Status": statuses
+#     })
 
-    # # Print the DataFrame
-    # print(df)
-    return df
+#     # # Print the DataFrame
+#     # print(df)
+#     return df
 
 
-def get_services():
-    cmd = '/bin/systemctl --type=service'
-    result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
-    lines = result.strip().split('\n')
+def get_terminal_services(data):
+    # cmd = '/bin/systemctl --type=service'
+    # result = subprocess.check_output(cmd, shell=True, universal_newlines=True)
+    lines = data.strip().split('\n')
     data = []
     for line in lines:
-        print("----")
-        print(line)
+        # print("----")
+        # print(line)
         # Stop processing if we encounter the "LOAD =" row
         if line.startswith("LOAD   ="):
             break
+        elif line.startswith("UNIT   "):
+            continue
 
         # Skip the line if it starts with '●'
         if line.startswith('●'):
@@ -157,7 +159,80 @@ def get_services():
             # print(line)
 
     # Convert the list of lists into a DataFrame
-    df = pd.DataFrame(data, columns=['Unit', 'Load', 'Sub', 'Description'])
+    terminal_services_df = pd.DataFrame(data, columns=['Unit', 'Load', 'Sub', 'Description'])
+    # terminal_services_df.to_excel("_terminal_services_df.xlsx")
+    return terminal_services_df
 
-    return df
 
+def read_services_files(service_dir):
+    # service_dir = "/etc/systemd/system/"
+    data = {'FileName': [], 'User': [], 'WorkingDirectory': [], 'ExecStart': []}
+    # print("------")
+    # print(service_dir)
+    for filename in os.listdir(service_dir):
+        if filename.endswith(".service"):
+            with open(os.path.join(service_dir, filename), 'r') as file:
+                content = file.readlines()
+
+            data['FileName'].append(filename)
+
+            user_line = [line for line in content if line.startswith('User')]
+            user = user_line[0].split('=')[1].strip() if user_line else None
+            data['User'].append(user)
+
+            wd_line = [line for line in content if line.startswith('WorkingDirectory')]
+            wd = wd_line[0].split('=')[1].strip().split('/')[-1] if wd_line else None
+            data['WorkingDirectory'].append(wd)
+
+            execstart_line = [line for line in content if line.startswith('ExecStart')]
+            execstart = re.findall(r':(\d+)', execstart_line[0]) if execstart_line else None
+            execstart = execstart[0] if execstart else None
+            data['ExecStart'].append(execstart)
+
+    service_files_df = pd.DataFrame(data)
+    # service_files_df.to_excel("_service_files_df.xlsx")
+    return service_files_df
+
+
+
+def merge_and_sort_dfs(terminal_services_df, service_files_df):
+
+    # Merge the dataframes on 'Unit'/'Service' columns
+    services_df = pd.merge(terminal_services_df, service_files_df, how='outer', left_on='Unit', right_on='FileName')
+
+    # Create helper columns for sorting
+    services_df['User_exists'] = services_df['User'].notna()
+    services_df['Sub_active'] = services_df['Sub'] == 'active'
+
+    # Sort by 'User_exists' (True first), then by 'Sub_active' (True first)
+    services_df.sort_values(['User_exists', 'Sub_active'], ascending=[False, False], inplace=True)
+
+    # Reset the index to reflect sorted order, without dropping it
+    services_df.reset_index(inplace=True)
+
+    # Rename the new column to 'Index'
+    services_df.rename(columns={'index': 'Index'}, inplace=True)
+    services_df.drop(['Index'], axis=1, inplace=True)
+
+    # Reset the index to reflect sorted order, without dropping it
+    services_df.reset_index(inplace=True)
+    services_df.rename(columns={'index': 'Index'}, inplace=True)
+    # Drop helper columns
+    services_df.drop(['User_exists', 'Sub_active'], axis=1, inplace=True)
+    # services_df.to_excel("_services_df.xlsx")
+    return services_df
+
+    # # Merge the dataframes on 'Unit'/'Service' columns
+    # services_df = pd.merge(terminal_services_df, service_files_df, how='outer', left_on='Unit', right_on='FileName')
+
+    # # First, sort by 'User', putting non-empty values on top
+    # services_df['User'] = services_df['User'].replace({None: pd.NA})
+    # services_df = services_df.sort_values('User', na_position='last')
+    # services_df.to_excel("_services_df.xlsx")
+    # # Then, sort by 'Sub', putting 'active' on top
+    # services_df['Sub'] = services_df['Sub'].replace({'active': 1, None: 2}).fillna(3)
+    # services_df = services_df.sort_values('Sub')
+
+    # return services_df
+
+# services_df = merge_and_sort_dfs(terminal_services_df, service_files_df)
