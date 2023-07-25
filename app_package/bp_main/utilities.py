@@ -133,6 +133,9 @@ def get_services():
 
     # Split the output into lines
     lines = result.strip().split('\n')
+    print("-- lines --")
+    print(lines)
+    print("------------")
 
     # Split each line into columns and remove unnecessary whitespace
     data = [line.split() for line in lines]
