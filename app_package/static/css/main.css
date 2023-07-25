@@ -11787,14 +11787,17 @@ body {
   border-collapse: collapse;
   table-layout: fixed;
 }
-.nginx_page th:nth-child(1), .nginx_page td:nth-child(1) {
+.nginx_page th:nth-child(1),
+.nginx_page td:nth-child(1) {
   width: min-content;
   white-space: nowrap;
 }
-.nginx_page th:nth-child(2), .nginx_page td:nth-child(2) {
+.nginx_page th:nth-child(2),
+.nginx_page td:nth-child(2) {
   word-wrap: break-word;
 }
-.nginx_page th, .nginx_page td {
+.nginx_page th,
+.nginx_page td {
   border: 1px solid #ccc;
   text-align: left;
 }
@@ -11819,12 +11822,15 @@ body {
   border-collapse: collapse;
   table-layout: fixed;
 }
-.running_services_page table tr td:last-child {
-  word-wrap: break-word;
+.running_services_page table tr td:not(:last-child) {
+  max-width: 8rem;
 }
-.running_services_page th, .running_services_page td {
+.running_services_page th,
+.running_services_page td {
   border: 1px solid #ccc;
   text-align: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* About */

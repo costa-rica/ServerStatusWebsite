@@ -100,14 +100,19 @@ body {
 // /* Nginx Server Status */
 .nginx_page {
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  .table_background_super{width:calc(100% - 1rem)}
-  .table_background{
-    width:100%;
+
+  .table_background_super {
+    width: calc(100% - 1rem)
+  }
+
+  .table_background {
+    width: 100%;
     overflow: auto;
   }
+
   table {
     width: 100%;
     // max-width: 800px;
@@ -115,32 +120,43 @@ body {
     margin: 0 auto;
     border-collapse: collapse;
     table-layout: fixed;
-}
-th:nth-child(1), td:nth-child(1) {
-  width: min-content;
-  white-space: nowrap;
-}
-th:nth-child(2), td:nth-child(2) {
-  word-wrap: break-word;
-}
-th, td {
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: min-content;
+    white-space: nowrap;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    word-wrap: break-word;
+  }
+
+  th,
+  td {
     border: 1px solid #ccc;
     text-align: left;
-}
+  }
 
 }
 
 // /* running_services_page Page */
 .running_services_page {
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  .table_background_super{width:calc(100% - 1rem)}
-  .table_background{
-    width:100%;
+
+  .table_background_super {
+    width: calc(100% - 1rem)
+  }
+
+  .table_background {
+    width: 100%;
     overflow: auto;
   }
+
   table {
     width: 100%;
     // max-width: 800px;
@@ -148,22 +164,22 @@ th, td {
     margin: 0 auto;
     border-collapse: collapse;
     table-layout: fixed;
-}
-// th:nth-child(1), td:nth-child(1) {
-//   // width: min-content;
-//   white-space: nowrap;
-// }
-// th:nth-child(2), td:nth-child(2) {
-//   word-wrap: break-word;
-// }
-table tr td:last-child {
-  word-wrap: break-word;
-}
+  }
 
-th, td {
+  // table tr td:last-child {
+  //   word-wrap: break-word;
+  // }
+  table tr td:not(:last-child) {
+    max-width: 8rem;
+  }
+
+  th,
+  td {
     border: 1px solid #ccc;
     text-align: left;
-}
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
 
 }
 
@@ -217,7 +233,8 @@ section.about_main {
       display: flex;
       justify-content: center;
     }
-    .table_background{
+
+    .table_background {
       width: calc(100% - 10rem);
     }
   }
