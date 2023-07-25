@@ -11823,7 +11823,7 @@ body {
   table-layout: fixed;
 }
 .running_services_page table tr td:not(:last-child) {
-  max-width: 8rem;
+  max-width: 4rem;
 }
 .running_services_page th,
 .running_services_page td {
