@@ -133,7 +133,7 @@ def get_services():
     lines = result.strip().split('\n')
 
     # Skip the first line (header) and last two lines (load information)
-    lines = lines[1:-2]
+    lines = lines[2:-2]
 
     # Split each line into columns based on whitespace
     data = []
