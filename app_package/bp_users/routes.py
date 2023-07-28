@@ -61,7 +61,7 @@ def login():
     if request.method == 'POST':
         # session.permanent = True
         formDict = request.form.to_dict()
-        print(f"formDict: {formDict}")
+        # print(f"formDict: {formDict}")
         email = formDict.get('email')
 
         user = sess_users.query(Users).filter_by(email=email).first()
