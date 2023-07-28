@@ -17,7 +17,7 @@ def read_syslog_into_list(syslog_file):
         print(f"{syslog_file} not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
-    sys_log_list.reverse()
+    sys_log_list
     return sys_log_list
 
 
