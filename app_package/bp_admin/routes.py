@@ -31,7 +31,7 @@ formatter_terminal = logging.Formatter('%(asctime)s:%(filename)s:%(name)s:%(mess
 logger_bp_admin = logging.getLogger(__name__)
 logger_bp_admin.setLevel(logging.DEBUG)
 
-file_handler = RotatingFileHandler(os.path.join(os.environ.get('WEB_ROOT'),'logs','bp_admin.log'), mode='a', maxBytes=5*1024*1024,backupCount=2)
+file_handler = RotatingFileHandler(os.path.join(os.environ.get('PROJECT_ROOT'),'logs','bp_admin.log'), mode='a', maxBytes=5*1024*1024,backupCount=2)
 file_handler.setFormatter(formatter)
 
 #where the stream_handler will print
