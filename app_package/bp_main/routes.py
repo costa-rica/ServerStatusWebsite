@@ -10,6 +10,7 @@ from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info,
 from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
+import json
 
 
 bp_main = Blueprint('bp_main', __name__)
@@ -88,12 +89,22 @@ def nginx_servers():
         "Web addresses": [', '.join(info['server_names']) for info in nginx_servers_json_list]
     }
 
+    proxy_port_file = os.path.join(current_app.config.get('DIR_DB_AUXILARY'), "proxy_port.json")
+
     # create dataframe
-    df = pd.DataFrame(data)
-    # sort dataframe by "Proxy Port"
-    df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
-    df = df.sort_values("Proxy Port")
-    df_dict = df.to_dict('records')
+    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+        df = pd.DataFrame(data)
+        # sort dataframe by "Proxy Port"
+        df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
+        df = df.sort_values("Proxy Port")
+        df_dict = df.to_dict('records')
+
+        # create json file using for test
+        with open(filename, 'w') as proxy_port_file:
+            json.dump(data, proxy_port_file)
+    else:
+        with open(filename, 'r') as proxy_port_file:
+            df_dict = json.load(proxy_port_file)
 
     return render_template('main/nginx_servers.html', 
         hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
