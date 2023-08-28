@@ -100,11 +100,11 @@ def nginx_servers():
         df_dict = df.to_dict('records')
 
         # create json file using for test
-        with open(filename, 'w') as proxy_port_file:
-            json.dump(data, proxy_port_file)
+        with open(proxy_port_file, 'w') as pp_file:
+            json.dump(data, pp_file)
     else:
-        with open(filename, 'r') as proxy_port_file:
-            df_dict = json.load(proxy_port_file)
+        with open(proxy_port_file, 'r') as pp_file:
+            df_dict = json.load(pp_file)
 
     return render_template('main/nginx_servers.html', 
         hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
