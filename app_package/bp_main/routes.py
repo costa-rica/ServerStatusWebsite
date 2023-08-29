@@ -102,9 +102,22 @@ def nginx_servers():
         # create json file using for test
         with open(proxy_port_file, 'w') as pp_file:
             json.dump(data, pp_file)
+        
+        logger_bp_main.info("---> here is df dict____")
+        logger_bp_main.info(df_dict)
+        logger_bp_main.info(f"type(df_dict): {type(df_dict)}")
+        logger_bp_main.info(f"df_dict.keys(): {df_dict.keys()}")
+        logger_bp_main.info(f"df_dict[0]: {df_dict[0]}")
     else:
         with open(proxy_port_file, 'r') as pp_file:
             df_dict = json.load(pp_file)
+
+        print("---> here is df dict____")
+        print(df_dict)
+        print(f"type(df_dict): {type(df_dict)}")
+        print(f"df_dict.keys(): {df_dict.keys()}")
+        print(f"df_dict[0]: {df_dict[0]}")
+        
 
     return render_template('main/nginx_servers.html', 
         hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
