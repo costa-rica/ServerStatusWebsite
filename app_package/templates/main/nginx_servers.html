@@ -2,30 +2,28 @@
 {% block main %}
 
 <div class="space_for_navbar_and_footer">
-    <div class="running_services_page">
+    <div class="nginx_page">
         <h1>Nginx Servers Running on {{ hostname }}</h1>
 
         <div class="table_background_super">
-            <div class="table_background std_framing">
-              <table id="table_id" class="display table responsive">
+          <!-- // table_background std_framing -->
+            <div class="std_framing">
+              <table class="table">
                 <thead>
-                  <tr>
-                    {% for i in df_dict[0].keys() %}
-                    <th>{{ i }}</th>
-                    {% endfor %}
-    
-                  </tr>
+                    <tr>
+                      <th class="proxy-port-column">Proxy Port</th>
+                      <th class="web-addresses-column">Web Addresses</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    {% for row in df_dict %}
+                    {% for item in df_dict %}
                     <tr>
-                        <td>{{ row['Proxy Port'] }}</td>
-                        <td>{{ row['Web addresses'] }}</td>
+                        <td class="proxy-port-column">{{ item["Proxy Port"] }}</td>
+                        <td class="web-addresses-column">{{ item["Web addresses"] }}</td>
                     </tr>
-                {% endfor %}
-    
+                    {% endfor %}
                 </tbody>
-              </table>
+            </table>
             </div><!-- table_background -->
           </div><!-- table_background_super -->
 

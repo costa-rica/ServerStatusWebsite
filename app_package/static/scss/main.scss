@@ -106,16 +106,31 @@ body {
 
   .table_background_super {
     width: calc(100% - 1rem);
+
   }
 
   .table_background {
     width: 100%;
   }
-  table td:nth-child(2) {
-    max-width: 3rem;
-    word-wrap: break-word;
-  }
 
+ // CHAT GPT
+ table {
+  word-wrap: break-word; 
+  table-layout: fixed;
+  color: var(--website_theme_font_color_dark);
+}
+
+.web-addresses-column {
+  // width: 100%;
+  word-wrap: break-word; 
+}
+.proxy-port-column {
+  // min-width: 100px;
+  width:6rem;
+  max-width: 6rem;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
 }
 
 // /* running_services_page Page */
@@ -136,7 +151,9 @@ body {
     max-width: 3rem;
     word-wrap: break-word;
   }
-
+  table {
+    color: var(--website_theme_font_color_dark);
+  }
 
 }
 

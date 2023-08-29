@@ -235,4 +235,21 @@ def merge_and_sort_dfs(terminal_services_df, service_files_df):
 
     # return services_df
 
-# services_df = merge_and_sort_dfs(terminal_services_df, service_files_df)
+def df_dict_to_list(data):
+
+
+    # 2. Parse the content of the file using the json module to get the dictionary.
+    proxy_ports = data["Proxy Port"]
+    web_addresses = data["Web addresses"]
+
+    # 3. Zip the "Proxy Port" and "Web addresses" lists together.
+    paired_data = list(zip(proxy_ports, web_addresses))
+
+    # 4. Convert the zipped pairs into a list of dictionaries.
+    result = [{"Proxy Port": int(port), "Web addresses": address} for port, address in paired_data]
+
+    # 5. Sort the list of dictionaries based on the "Proxy Port".
+    result = sorted(result, key=lambda x: x["Proxy Port"])
+
+    # Print the result
+    return(result)

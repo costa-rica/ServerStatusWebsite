@@ -6,7 +6,8 @@ from logging.handlers import RotatingFileHandler
 import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
-    get_terminal_services, read_services_files, merge_and_sort_dfs
+    get_terminal_services, read_services_files, merge_and_sort_dfs, \
+    df_dict_to_list
 from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
@@ -93,6 +94,7 @@ def nginx_servers():
 
     # create dataframe
     if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+        logger_bp_main.info("---> FLASK_CONFIG_TYPE is NOT local <------")
         df = pd.DataFrame(data)
         # sort dataframe by "Proxy Port"
         df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
@@ -106,16 +108,18 @@ def nginx_servers():
         logger_bp_main.info("---> here is df dict____")
         logger_bp_main.info(df_dict)
         logger_bp_main.info(f"type(df_dict): {type(df_dict)}")
-        logger_bp_main.info(f"df_dict.keys(): {df_dict.keys()}")
+        # logger_bp_main.info(f"df_dict.keys(): {df_dict.keys()}")
         logger_bp_main.info(f"df_dict[0]: {df_dict[0]}")
     else:
+        logger_bp_main.info("---> FLASK_CONFIG_TYPE is local <------")
         with open(proxy_port_file, 'r') as pp_file:
             df_dict = json.load(pp_file)
 
+        df_dict = df_dict_to_list(df_dict)
         print("---> here is df dict____")
         print(df_dict)
         print(f"type(df_dict): {type(df_dict)}")
-        print(f"df_dict.keys(): {df_dict.keys()}")
+        # print(f"df_dict.keys(): {df_dict.keys()}")
         print(f"df_dict[0]: {df_dict[0]}")
         
 

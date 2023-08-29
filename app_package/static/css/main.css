@@ -11779,9 +11779,19 @@ body {
 .nginx_page .table_background {
   width: 100%;
 }
-.nginx_page table td:nth-child(2) {
-  max-width: 3rem;
+.nginx_page table {
   word-wrap: break-word;
+  table-layout: fixed;
+  color: var(--website_theme_font_color_dark);
+}
+.nginx_page .web-addresses-column {
+  word-wrap: break-word;
+}
+.nginx_page .proxy-port-column {
+  width: 6rem;
+  max-width: 6rem;
+  white-space: nowrap;
+  flex-wrap: nowrap;
 }
 
 .running_services_page {
@@ -11799,6 +11809,9 @@ body {
 .running_services_page table td:nth-child(2) {
   max-width: 3rem;
   word-wrap: break-word;
+}
+.running_services_page table {
+  color: var(--website_theme_font_color_dark);
 }
 
 /* About */
