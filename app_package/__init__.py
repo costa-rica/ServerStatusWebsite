@@ -42,6 +42,7 @@ logging.getLogger('werkzeug').setLevel(logging.DEBUG)
 logging.getLogger('werkzeug').addHandler(file_handler)
 
 logger_init.info(f'--- Starting Server Status Web---')
+logger_init.info(f"- PROJECT_ROOT: {os.environ.get('PROJECT_ROOT')}")
 TEMPORARILY_DOWN = "ACTIVE" if os.environ.get('TEMPORARILY_DOWN') == "1" else "inactive"
 logger_init.info(f"- TEMPORARILY_DOWN: {TEMPORARILY_DOWN}")
 logger_init.info(f"- FLASK_ENV: {os.environ.get('FLASK_ENV')}")
