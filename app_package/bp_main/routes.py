@@ -199,7 +199,7 @@ def manage_service():
 
         # Define the systemctl command to run
         # command = f"sudo systemctl {status} WhatSticks10Api_dev"
-        command = f"sudo systemctl {status} {service_name}"
+        command = f"sudo systemctl {status} {service_name}.service"
 
         try:
             # Execute the systemctl command
