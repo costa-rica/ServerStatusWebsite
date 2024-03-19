@@ -1,5 +1,6 @@
 from flask import Blueprint
-from flask import render_template, send_from_directory, current_app
+from flask import render_template, send_from_directory, current_app, \
+    request, redirect, url_for, flash
 import os
 import logging
 from logging.handlers import RotatingFileHandler
@@ -7,7 +8,7 @@ import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
     get_terminal_services, read_services_files, merge_and_sort_dfs, \
-    df_dict_to_list
+    df_dict_to_list, check_start_stop
 from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
@@ -129,7 +130,7 @@ def nginx_servers():
 
 
 
-@bp_main.route('/running_services')
+@bp_main.route('/running_services', methods = ['GET', 'POST'])
 @login_required
 def running_services():
     logger_bp_main.info(f"- in running_services route")
@@ -152,19 +153,92 @@ def running_services():
         services_from_terminal_data = subprocess.check_output(cmd, shell=True, universal_newlines=True)
         service_dir = "/etc/systemd/system/"
         
-
     terminal_services_df = get_terminal_services(services_from_terminal_data)
-
 
     service_files_df = read_services_files(service_dir)
 
     services_df = merge_and_sort_dfs(terminal_services_df, service_files_df)
 
+    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+        services_df.to_csv(os.path.join(system_file_path,'services_df.csv'))
+
+    # Apply the function to each row in the 'Unit' column and create the 'start_stop' column
+    services_df['start_stop'] = services_df['Unit'].apply(check_start_stop)
 
     df_dict = services_df.to_dict('records')
 
+    if request.method == 'POST':
+        formDict = request.form.to_dict()
+        print('formDict:::', formDict)
+        print('formDict:::', type(formDict))
+        service_name= list(formDict.keys())[0]
+        print('service_name:::', service_name)
+        status = formDict.get(service_name)
+        return redirect(url_for('bp_main.manage_service', status = status, service_name = service_name))
+
+
     return render_template('main/running_services.html', hostname=hostname,
-        df_dict=df_dict)
+        df_dict=df_dict, len=len)
 
 
+@bp_main.route('/manage_service', methods=['GET','POST'])
+def manage_service():
+    logger_bp_main.info(f"-- accessed: manage_service route")
+    status = request.args.get('status', None)
+    service_name = request.args.get('service_name', None)
+
+    logger_bp_main.info(f"Managing: {service_name}")
+    logger_bp_main.info(f"Current status : {status}")
+
+    if status == 'active':
+        status = 'stop'
+    else:
+        status = 'start'
+
+    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+        # Validate the status argument
+        if status not in ['start', 'stop']:
+            return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400
+
+        # Define the systemctl command to run
+        # command = f"sudo systemctl {status} WhatSticks10Api_dev"
+        command = f"sudo systemctl {status} {service_name}"
+
+        try:
+            # Execute the systemctl command
+            subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # return jsonify({"message": f"The {service_name} service has been {status}ed successfully."}), 200
+            flash(f"{service_name} is now {status}","success")
+            return redirect(request.referrer)
+        except subprocess.CalledProcessError as e:
+            # Return an error message if the command execution fails
+            logger_bp_main.info(f"Failed to {status} {service_name}. Error: {e}")
+            flash(f"{service_name} failed to turn {status}","warning")
+            return redirect(url_for('bp_main.running_services'))
+    else:
+        flash(f"{service_name} is now {status}","success")
+        return redirect(request.referrer)
+
+
+
+
+@bp_main.route('/manage_whatsticks10api_dev', methods=['POST'])
+def manage_whatsticks10api_dev():
+
+    status = request.args.get('status', None)
+    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+        # Validate the status argument
+        if status not in ['start', 'stop']:
+            return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400
+
+        # Define the systemctl command to run
+        command = f"sudo systemctl {status} WhatSticks10Api_dev"
+
+        try:
+            # Execute the systemctl command
+            subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return jsonify({"message": f"The WhatSticks10Api_dev service has been {status}ed successfully."}), 200
+        except subprocess.CalledProcessError as e:
+            # Return an error message if the command execution fails
+            return jsonify({"error": f"Failed to {status} WhatSticks10Api_dev. Error: {e}"}), 500
 

@@ -1,4 +1,4 @@
-@use "custom";
+// @use "custom";
 
 /* Flash */
 .flash_custom_parent {
@@ -193,17 +193,10 @@
 .footer {
   margin-top: auto;
   padding: 1rem 1rem var(--nav-height) 3rem;
-  background-color: var(--bs-gray-200);
+  background-color: var(--bs-gray-700);
 
-  // height: auto !important;
-  // height:auto;
-  // flex-grow: 2;
-  // min-height: 100%;
   .footer_right {
 
-    // display:flex;
-    // justify-content: end;
-    // flex-wrap:wrap;
     .footer_link_item {
       width: 100%;
 

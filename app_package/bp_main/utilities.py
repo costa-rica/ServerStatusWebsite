@@ -4,7 +4,7 @@ import re
 import subprocess
 # import os
 import pandas as pd
-# import subprocess
+from flask import current_app
 if os.environ.get('FLASK_CONFIG_TYPE') != "local":
     from systemd import journal
 
@@ -66,64 +66,6 @@ def write_nginx_info_to_excel(nginx_info):
 
 
 
-# def services_df(directory):
-#     # The directory where service files are stored in Ubuntu
-#     # directory = "/etc/systemd/system"
-
-#     # Lists to store the results
-#     filenames = []
-#     users = []
-#     execstarts = []
-#     statuses = []
-
-#     # Traverse the directory
-#     for filename in os.listdir(directory):
-#         if filename.endswith(".service"):
-#             # Full path to the service file
-#             filepath = os.path.join(directory, filename)
-            
-#             user = ""
-#             execstart = ""
-
-#             # Read the service file
-#             with open(filepath, "r") as file:
-#                 for line in file.readlines():
-#                     line = line.strip()
-
-#                     # Find the User line
-#                     if line.startswith("User="):
-#                         user = line.split("=")[1].strip()
-
-#                     # Find the ExecStart line
-#                     if line.startswith("ExecStart="):
-#                         execstart = line.split("=")[1].strip()
-
-#             # Append the results
-#             filenames.append(filename)
-#             users.append(user)
-#             execstarts.append(execstart)
-
-#             # Get the status of the service
-#             try:
-#                 output = subprocess.check_output(["sudo", "systemctl", "is-active", filename], universal_newlines=True)
-#                 statuses.append(output.strip())
-#             except subprocess.CalledProcessError as e:
-#                 statuses.append(e)
-#             except:
-#                 statuses.append("unknown")
-
-#     # Create a DataFrame
-#     df = pd.DataFrame({
-#         "Filename": filenames,
-#         "User": users,
-#         "ExecStart": execstarts,
-#         "Status": statuses
-#     })
-
-#     # # Print the DataFrame
-#     # print(df)
-#     return df
-
 
 def get_terminal_services(data):
     # cmd = '/bin/systemctl --type=service'
@@ -154,8 +96,8 @@ def get_terminal_services(data):
             description = ' '.join(words[3:])
 
             data.append([unit, load, sub, description])
-        except ValueError:
-            print("Error line")
+        except ValueError as e:
+            print(f"Error occurred: {e}")
             # print(line)
 
     # Convert the list of lists into a DataFrame
@@ -253,3 +195,24 @@ def df_dict_to_list(data):
 
     # Print the result
     return(result)
+
+# Function to check if the unit matches any in the start_stop_list
+def check_start_stop(unit):
+    start_stop_list = current_app.config.get('START_STOP_LIST')
+    
+    # print(f"start_stop_list: {start_stop_list}")
+    # print(f"unit: {unit}")
+    # Remove the ".service" suffix if present
+    unit_cleaned = unit.replace('.service', '')
+    # print(f"unit_cleaned : {unit_cleaned}")
+    try:
+        # Check if the cleaned unit is in the start_stop_list
+        if unit_cleaned in start_stop_list:
+            return unit_cleaned
+        else:
+            return ''
+    except:
+        return ''
+
+
+

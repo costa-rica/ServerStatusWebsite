@@ -1,5 +1,6 @@
 {% extends "_layout.html" %}
 {% block main %}
+<form method="POST" id="form_start_stop" enctype="multipart/form-data"></form>
 
 <div class="space_for_navbar_and_footer">
     <div class="running_services_page">
@@ -20,6 +21,7 @@
                         <th>Status</th>
                         <th>User</th>
                         <th>Working Dir</th>
+                        <th>Turn on or off</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -31,6 +33,21 @@
                         <td class="middle">{{ row['Sub'] }}</td>
                         <td>{{ row['User'] }}</td>
                         <td>{{ row['WorkingDirectory'] }}</td>
+                        <td>
+                          {% if len(row['start_stop']) > 0  %}
+                            {% if row['Sub'] =="active"  %}
+                            <button type="submit" class="btn btn-success " name="{{ row['start_stop'] }}"
+                            value="{{ row['Sub'] }}" form="form_start_stop">Turn off</button>
+                              {% else %}
+                            <button type="submit" class="btn btn-secondary " name="{{ row['start_stop'] }}"
+                            value="{{ row['Sub'] }}" form="form_start_stop">Turn on</button>
+                            {% endif %}
+                          {% endif %}
+                          
+
+
+
+                        </td>
 
                         
                     </tr>
@@ -48,10 +65,22 @@
 
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-      $('#table_id').DataTable();
-    });
-    </script>
+    <!-- jQuery -->
+    <script src="{{ url_for('static', filename='additional_styling/DataTables/jQuery-3.7.0/jquery-3.7.0.min.js') }}"></script>
+    <!-- DataTables Core JavaScript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='additional_styling/DataTables/datatables.min.js') }}"></script>
+    <!-- DataTables Responsive Extension JavaScript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='additional_styling/DataTables/Responsive-2.5.0/dataTables.responsive.min.js') }}"></script>
+  
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#table_id').DataTable({
+            responsive: true,
+            "order": [[6, 'desc']] // Sort by the 7th column (index 6) in ascending order by default
+        });
+      });
+  </script>
+  
 
 {% endblock %}

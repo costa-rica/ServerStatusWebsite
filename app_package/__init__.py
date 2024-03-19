@@ -104,6 +104,7 @@ def create_app(config_for_flask = config):
     #     logger_init.info(f"NEW db created: {os.path.join(config_for_flask.DB_ROOT,os.environ.get('DB_NAME_BLS'))}")
 
     logger_init.info(f"- SQL_URI_USERS: sqlite:///{config_for_flask.DB_ROOT}{os.environ.get('DB_NAME_USERS')}")
+    logger_init.info(f"- START_STOP_LIST: {config_for_flask.START_STOP_LIST}")
 
     from app_package.bp_main.routes import bp_main
     from app_package.bp_users.routes import bp_users

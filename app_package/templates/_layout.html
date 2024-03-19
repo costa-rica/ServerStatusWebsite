@@ -14,26 +14,22 @@
     }
   </script>
 
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='additional_styling/bootswatch/bootstrap.min.css') }}">
+  <!-- DataTables Core CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='additional_styling/DataTables/datatables.min.css') }}"/>
+  <!-- DataTables Responsive Extension CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='additional_styling/DataTables/Responsive-2.5.0/responsive.dataTables.min.css') }}"/>
+  <!-- Your custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-<!-- Datatable -->
-<script src="../static/DataTables/jQuery-3.6.0/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../static/DataTables/DataTables-1.13.4/css/jquery.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="../static/customAndOldFiles/css/responsive.dataTables.min.css">
-<!-- <script src="../static/customAndOldFiles/js/moment.min.js"></script> -->
-<script type="text/javascript" src="../static/customAndOldFiles/js/jquery.dataTables-1.1.20.min.js"></script>
-<script type="text/javascript" src="../static/customAndOldFiles/js/dataTables.responsive.min.js"></script>
-<script type="text/javascript" src="../static/customAndOldFiles/js/datetime.js"></script>
+  <link rel="icon" href="{{ url_for('bp_main.get_aux_file_from_dir', aux_dir_name='dashAndDataV3_teal', filename= 'favicon.ico') }}">
 
-<!-- for modals-->
-<script src="../static/bootstrap-5.2.3/dist/js/bootstrap.min.js"></script>
-
-
-
-  <!-- <link rel="icon"  href="/static/images/favicon.ico"> -->
-  <link rel="icon"  href="{{ url_for('bp_main.get_aux_file_from_dir', aux_dir_name='dashAndDataV3_teal', filename= 'favicon.ico') }}">
   <title>Server Status </title>
 </head>
 <body id="body">
+
+
 
   <div class="navbar_super ">
 
