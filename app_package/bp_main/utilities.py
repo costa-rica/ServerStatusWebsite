@@ -200,14 +200,10 @@ def df_dict_to_list(data):
 def check_start_stop(unit):
     start_stop_list = current_app.config.get('START_STOP_LIST')
     
-    # print(f"start_stop_list: {start_stop_list}")
-    # print(f"unit: {unit}")
-    # Remove the ".service" suffix if present
-    unit_cleaned = unit.replace('.service', '')
-    # print(f"unit_cleaned : {unit_cleaned}")
     try:
+        # unit_cleaned = unit.replace('.service', '')
         # Check if the cleaned unit is in the start_stop_list
-        if unit_cleaned in start_stop_list:
+        if unit in start_stop_list:
             return unit_cleaned
         else:
             return ''

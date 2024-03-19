@@ -129,7 +129,6 @@ def nginx_servers():
         data=data, df_dict=df_dict)
 
 
-
 @bp_main.route('/running_services', methods = ['GET', 'POST'])
 @login_required
 def running_services():
@@ -163,19 +162,17 @@ def running_services():
         services_df.to_csv(os.path.join(system_file_path,'services_df.csv'))
 
     # Apply the function to each row in the 'Unit' column and create the 'start_stop' column
-    services_df['start_stop'] = services_df['Unit'].apply(check_start_stop)
+    # services_df['start_stop'] = services_df['Unit'].apply(check_start_stop)
+    services_df['start_stop'] = services_df['WorkingDirectory'].apply(check_start_stop)
 
     df_dict = services_df.to_dict('records')
 
     if request.method == 'POST':
         formDict = request.form.to_dict()
         print('formDict:::', formDict)
-        print('formDict:::', type(formDict))
         service_name= list(formDict.keys())[0]
-        print('service_name:::', service_name)
         status = formDict.get(service_name)
         return redirect(url_for('bp_main.manage_service', status = status, service_name = service_name))
-
 
     return render_template('main/running_services.html', hostname=hostname,
         df_dict=df_dict, len=len)
@@ -220,25 +217,23 @@ def manage_service():
         return redirect(request.referrer)
 
 
+# @bp_main.route('/manage_whatsticks10api_dev', methods=['POST'])
+# def manage_whatsticks10api_dev():
 
+#     status = request.args.get('status', None)
+#     if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+#         # Validate the status argument
+#         if status not in ['start', 'stop']:
+#             return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400
 
-@bp_main.route('/manage_whatsticks10api_dev', methods=['POST'])
-def manage_whatsticks10api_dev():
+#         # Define the systemctl command to run
+#         command = f"sudo systemctl {status} WhatSticks10Api_dev"
 
-    status = request.args.get('status', None)
-    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
-        # Validate the status argument
-        if status not in ['start', 'stop']:
-            return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400
-
-        # Define the systemctl command to run
-        command = f"sudo systemctl {status} WhatSticks10Api_dev"
-
-        try:
-            # Execute the systemctl command
-            subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            return jsonify({"message": f"The WhatSticks10Api_dev service has been {status}ed successfully."}), 200
-        except subprocess.CalledProcessError as e:
-            # Return an error message if the command execution fails
-            return jsonify({"error": f"Failed to {status} WhatSticks10Api_dev. Error: {e}"}), 500
+#         try:
+#             # Execute the systemctl command
+#             subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#             return jsonify({"message": f"The WhatSticks10Api_dev service has been {status}ed successfully."}), 200
+#         except subprocess.CalledProcessError as e:
+#             # Return an error message if the command execution fails
+#             return jsonify({"error": f"Failed to {status} WhatSticks10Api_dev. Error: {e}"}), 500
 
