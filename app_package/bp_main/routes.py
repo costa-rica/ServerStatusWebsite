@@ -137,13 +137,16 @@ def running_services():
     hostname = socket.gethostname()
 
     if os.environ.get('FLASK_CONFIG_TYPE') == "local":
-        system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/SpeedyProd10/"
+        # system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/SpeedyProd10/"
+        system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/"
         file_name = "system.txt"
-        file = system_file_path + "system_report01/" + file_name
+        # file = system_file_path + "system_report01/" + file_name
+        file = system_file_path + file_name
         with open(file, "r") as f:
             services_from_terminal_data = f.read()
 
-        service_dir = system_file_path + "etc/systemd/system/"
+        # service_dir = system_file_path + "etc/systemd/system/"
+        service_dir = system_file_path
     else:
         cmd = '/bin/systemctl --type=service'
         services_from_terminal_data = subprocess.check_output(cmd, shell=True, universal_newlines=True)
@@ -162,4 +165,6 @@ def running_services():
 
     return render_template('main/running_services.html', hostname=hostname,
         df_dict=df_dict)
+
+
 

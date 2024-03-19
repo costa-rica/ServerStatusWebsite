@@ -1,0 +1,151 @@
+
+/* HOME */
+.home_page {
+    width: calc(100% - 1rem);
+  
+    h1 {
+      width: 100%;
+    }
+  
+    display:flex;
+    flex-wrap: wrap;
+  
+    .hero_center {
+      display: flex;
+      justify-content: center;
+      // width:min-content;
+      width: 100%;
+  
+      // background-color: red;
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+  
+  // /* Nginx Server Status */
+  .nginx_page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  
+    .table_background_super {
+      width: calc(100% - 1rem);
+  
+    }
+  
+    .table_background {
+      width: 100%;
+    }
+  
+   // CHAT GPT
+   table {
+    word-wrap: break-word; 
+    table-layout: fixed;
+    color: var(--website_theme_font_color_dark);
+  }
+  
+  .web-addresses-column {
+    // width: 100%;
+    word-wrap: break-word; 
+  }
+  .proxy-port-column {
+    // min-width: 100px;
+    width:6rem;
+    max-width: 6rem;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+  }
+  
+  // /* running_services_page Page */
+  .running_services_page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  
+    .table_background_super {
+      width: calc(100% - 1rem);
+    }
+  
+    .table_background {
+      width: 100%;
+    }
+    table td:nth-child(2) {
+      max-width: 3rem;
+      word-wrap: break-word;
+    }
+    table {
+      color: var(--website_theme_font_color_dark);
+    }
+  
+  }
+  
+  
+  /* About */
+  section.about_main {
+    color: var(--website_theme_font_color_dark);
+  
+    a {
+      color: var(--website_theme_font_color_a_dark);
+    }
+  
+    a:hover {
+      color: var(--website_theme_fun_color);
+    }
+  }
+  
+  /* Sys Log Page */
+  .sys_log_page {
+    .syslog_doc_div {
+      background-color: black;
+      padding: 1rem;
+    }
+  
+    code {
+      font-size: .6rem;
+    }
+  
+    ul#syslog_doc_id {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+  
+    ul#syslog_doc_id li {
+      margin: 0.1em 0;
+      /* Adjust this value for desired spacing */
+    }
+  
+  }
+  
+  @media screen and (min-width: 768px) {
+    .home_page {
+      width: calc(100% - 5rem);
+    }
+  
+    /* Nginx Server Status */
+    .nginx_page {
+      .table_background_super {
+        width: calc(100% - 1rem);
+        display: flex;
+        justify-content: center;
+      }
+      .table_background {
+        width: 80%;
+      }
+    }
+    .running_services_page{
+      .table_background_super {
+        width: calc(100% - 1rem);
+        display: flex;
+        justify-content: center;
+      }
+      .table_background {
+        width: 80%;
+      }
+    }
+  
+  }

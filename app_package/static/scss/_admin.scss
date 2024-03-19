@@ -1,3 +1,33 @@
+/* Admin Page */
+.admin_page {
+  display: flex;
+  // gap:1rem;
+  flex-wrap: wrap;
+  padding-top: 2rem;
+  justify-content: center;
+  align-items: center;
+
+  .std_frame_light_gray {
+    background-color: var(--color-gray02);
+    border-radius: .5rem;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .col_1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    width: 80%;
+  }
+
+}
+
+
+
+
+/* OLD */
+
 /* Databsase Page */
 .database_page{
   // background-color: pink;
