@@ -204,7 +204,7 @@ def check_start_stop(unit):
         # unit_cleaned = unit.replace('.service', '')
         # Check if the cleaned unit is in the start_stop_list
         if unit in start_stop_list:
-            return unit_cleaned
+            return unit
         else:
             return ''
     except:
