@@ -21,8 +21,10 @@ def timetz(*args):
 
 logging.Formatter.converter = timetz
 
+app_name = "ServerStatusWebsite"
 formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
-formatter_terminal = logging.Formatter('%(asctime)s:%(filename)s:%(name)s:%(message)s')
+formatter_terminal = logging.Formatter(f'%(asctime)s - {app_name} - %(name)s - [%(filename)s:%(lineno)d] - %(message)s')
+
 
 logger_init = logging.getLogger('__init__')
 logger_init.setLevel(logging.DEBUG)
