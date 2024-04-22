@@ -6,6 +6,7 @@ from pytz import timezone
 from datetime import datetime
 from flask_mail import Mail
 import secure
+from ss_models import Base, engine
 
 
 if not os.path.exists(os.path.join(os.environ.get('WEB_ROOT'),'logs')):
@@ -77,7 +78,8 @@ def create_app(config_for_flask = config):
     if os.path.exists(os.path.join(config_for_flask.DATABASE_ROOT,os.environ.get('DB_NAME_USERS'))):
         logger_init.info(f"db already exists: {os.path.join(config_for_flask.DATABASE_ROOT,os.environ.get('DB_NAME_USERS'))}")
     else:
-        dict_base['Base_users'].metadata.create_all(dict_engine['engine_users'])
+        # Base.metadata.create_all(dict_engine['engine_users'])
+        Base.metadata.create_all(engine)
         logger_init.info(f"NEW db created: {os.path.join(config_for_flask.DATABASE_ROOT,os.environ.get('DB_NAME_USERS'))}")
 
 
