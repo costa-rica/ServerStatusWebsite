@@ -35,7 +35,9 @@ def teardown_appcontext(exception=None):
 def get_global_dict_for_templates():
     hostname = socket.gethostname()
     global_dict_for_templates = {}
-    global_dict_for_templates["hostname"] = socket.gethostname()
+    custom_page_title = f"{socket.gethostname().capitalize()} (DD)"
+    global_dict_for_templates["hostname"] = socket.gethostname().capitalize()
+    global_dict_for_templates["custom_page_title"] = custom_page_title
     return global_dict_for_templates
 
 def custom_logger(logger_filename):
