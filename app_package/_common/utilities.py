@@ -2,7 +2,7 @@ from ss_models import engine, DatabaseSession, text, Users
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from pytz import timezone
 from datetime import datetime
 from flask import g
@@ -35,9 +35,12 @@ def teardown_appcontext(exception=None):
 def get_global_dict_for_templates():
     hostname = socket.gethostname()
     global_dict_for_templates = {}
-    custom_page_title = f"{socket.gethostname().capitalize()} (DD)"
-    global_dict_for_templates["hostname"] = socket.gethostname().capitalize()
-    global_dict_for_templates["custom_page_title"] = custom_page_title
+    hostname_capitalized = f"{socket.gethostname().capitalize()}"
+    hostname_capitalized_and_dd = f"{hostname_capitalized} (DD)"
+    global_dict_for_templates["hostname_capitalized"] = hostname_capitalized
+    global_dict_for_templates["hostname_capitalized_and_dd"] = hostname_capitalized_and_dd
+
+
     return global_dict_for_templates
 
 def custom_logger(logger_filename):

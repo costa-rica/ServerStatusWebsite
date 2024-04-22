@@ -51,7 +51,7 @@
 
 
   <!-- <title>Server Status </title> -->
-  <title>{{ custom_page_title }} </title>
+  <title>{{ hostname_capitalized_and_dd }} </title>
 </head>
 <body id="body">
 
@@ -77,8 +77,14 @@
 
          
 
-
+        <div class="div_hostname_large">
+          <h1>{{ hostname_capitalized }}</h1>
+        </div>
+        <div class="div_hostname_small">
+          {{ hostname_capitalized }}
+        </div>
         
+        <br>
 
         {% if current_user %}
         {{ current_user.username }}

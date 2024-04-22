@@ -68,7 +68,15 @@
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
+      // background-color: red;
+      width:100%;      
     }
+    .div_hostname_small{
+      display:flex;
+      justify-content: center;
+      width:100%;
+    }
+    .div_hostname_large{display:none}
 
     .page_title_large {
       display: none
@@ -79,6 +87,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      // background-color: green;
     }
 
     nav.btn_menu {
@@ -230,7 +239,12 @@
         padding: .25rem 2rem;
       }
 
-
+      .div_hostname_large{
+        display:flex;
+        justify-content: center;
+        width:100%;
+      }
+      .div_hostname_small{display:none}
 
     /* OLD Nav bar */
     .nav_right {
