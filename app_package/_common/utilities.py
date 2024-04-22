@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from pytz import timezone
 from datetime import datetime
 from flask import g
+import socket
 
 login_manager= LoginManager()
 login_manager.login_view = 'bp_users.login'
@@ -31,7 +32,11 @@ def teardown_appcontext(exception=None):
         print("----- db_session.close() -----")
         db_session.close()
 
-
+def get_global_dict_for_templates():
+    hostname = socket.gethostname()
+    global_dict_for_templates = {}
+    global_dict_for_templates["hostname"] = socket.gethostname()
+    return global_dict_for_templates
 
 def custom_logger(logger_filename):
     """

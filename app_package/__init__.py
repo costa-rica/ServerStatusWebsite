@@ -1,6 +1,7 @@
 from flask import Flask
 from ._common.config import config
-from ._common.utilities import login_manager, custom_logger_init, teardown_appcontext
+from ._common.utilities import login_manager, custom_logger_init, \
+    teardown_appcontext, get_global_dict_for_templates
 import os
 from pytz import timezone
 from datetime import datetime
@@ -30,6 +31,9 @@ def create_app(config_for_flask = config):
     login_manager.init_app(app)
     mail.init_app(app)
 
+    # Register the context processor
+    app.context_processor(get_global_dict_for_templates)
+
     logger_init.info(f"- DATABASE_ROOT: {config_for_flask.DATABASE_ROOT}")
     # logger_init.info(f"- ENV: {app.config['ENV']}")
 
@@ -51,27 +55,6 @@ def create_app(config_for_flask = config):
     ## media - all other videos and images
     create_folder(config_for_flask.DIR_MEDIA)
     ############################################################################
-
-    # OLD - Delete ############################################################################
-    # ## Build Auxiliary directories in DATABASE_ROOT
-    # if not os.path.exists(config_for_flask.DATABASE_ROOT):
-    #     os.makedirs(config_for_flask.DATABASE_ROOT)
-
-    # # config.DIR_DB_AUXILARY directory:
-    # if not os.path.exists(config_for_flask.DIR_DB_AUXILARY):
-    #     os.makedirs(config_for_flask.DIR_DB_AUXILARY)
-    # # config.DIR_DB_AUX_IMAGES directory:
-    # if not os.path.exists(config_for_flask.DIR_DB_AUX_IMAGES):
-    #     os.makedirs(config_for_flask.DIR_DB_AUX_IMAGES)
-    # # config.DIR_DB_AUX_BLOG directory:
-    # if not os.path.exists(config_for_flask.DIR_DB_AUX_BLOG):
-    #     os.makedirs(config_for_flask.DIR_DB_AUX_BLOG)
-    # # config.DIR_DB_AUX_BLOG_POSTS directory:
-    # if not os.path.exists(config_for_flask.DIR_DB_AUX_BLOG_POSTS):
-    #     os.makedirs(config_for_flask.DIR_DB_AUX_BLOG_POSTS)
-
-
-    # ############################################################################
     ## Build Sqlite database files
     #Build DB_NAME_USERS
     

@@ -3,7 +3,6 @@ from flask import render_template, send_from_directory, current_app, \
     request, redirect, url_for, flash, g
 import os
 from ss_models import DatabaseSession
-import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
     get_terminal_services, read_services_files, merge_and_sort_dfs, \
@@ -43,11 +42,11 @@ def after_request(response):
     return response
 
 
+
 @bp_main.route("/", methods=["GET","POST"])
 def home():
     logger_bp_main.info(f"-- in home page route --")
-    hostname = socket.gethostname()
-    return render_template('main/home.html', hostname=hostname)
+    return render_template('main/home.html')
 
 # ###### OLD #######################
 # # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
@@ -83,22 +82,6 @@ def website_assets_images(filename):
 
     return send_from_directory(dir, filename)
 
-# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
-# @bp_main.route('/get_aux_file_from_dir/<aux_dir_name>/<filename>')
-# def get_aux_file_from_dir(aux_dir_name, filename):
-#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
-#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name), filename)
-
-# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
-# @bp_main.route('/get_aux_images/<aux_dir_name>/<image_dir>/<filename>')
-# def get_aux_images(aux_dir_name,image_dir, filename):
-#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
-#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name,image_dir), filename)
-
-
-
-
-
 
 
 @bp_main.route('/server_syslog')
@@ -106,7 +89,6 @@ def website_assets_images(filename):
 def server_syslog():
     logger_bp_main.info(f"- in server_syslog route")
     
-    hostname = socket.gethostname()
     syslog_file = '/var/log/syslog'
 
     if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
@@ -115,7 +97,7 @@ def server_syslog():
     sys_log_list = read_syslog_into_list(syslog_file)
 
 
-    return render_template('main/server_syslog.html', hostname=hostname,sys_log_list=sys_log_list)
+    return render_template('main/server_syslog.html', sys_log_list=sys_log_list)
 
 
 @bp_main.route('/nginx_servers')
@@ -123,7 +105,6 @@ def server_syslog():
 def nginx_servers():
     logger_bp_main.info(f"- in nginx_servers route")
     
-    hostname = socket.gethostname()
 
     conf_file_path = '/etc/nginx/conf.d/'
 
@@ -175,7 +156,7 @@ def nginx_servers():
         
 
     return render_template('main/nginx_servers.html', 
-        hostname=hostname,nginx_servers_json_list=nginx_servers_json_list,
+        nginx_servers_json_list=nginx_servers_json_list,
         data=data, df_dict=df_dict)
 
 
@@ -184,8 +165,6 @@ def nginx_servers():
 def running_services():
     logger_bp_main.info(f"- in running_services route")
     
-    hostname = socket.gethostname()
-
     if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
         # system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/SpeedyProd10/"
         system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/"
@@ -224,8 +203,7 @@ def running_services():
         status = formDict.get(service_name)
         return redirect(url_for('bp_main.manage_service', status = status, service_name = service_name))
 
-    return render_template('main/running_services.html', hostname=hostname,
-        df_dict=df_dict, len=len)
+    return render_template('main/running_services.html', df_dict=df_dict, len=len)
 
 
 @bp_main.route('/manage_service', methods=['GET','POST'])
