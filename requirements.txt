@@ -75,7 +75,6 @@ prompt-toolkit==3.0.39
 psutil==5.9.6
 ptyprocess==0.7.0
 pure-eval==0.2.2
--e git+https://github.com/costa-rica/PersonalWebsite02_modules.git@06cb3c13c4a07bc7a3f1a61896f42ddea6ed6249#egg=pw_modules
 pycparser==2.21
 Pygments==2.16.1
 python-dateutil==2.8.2

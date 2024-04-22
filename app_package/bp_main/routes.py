@@ -1,9 +1,8 @@
 from flask import Blueprint
 from flask import render_template, send_from_directory, current_app, \
-    request, redirect, url_for, flash
+    request, redirect, url_for, flash, g
 import os
-import logging
-from logging.handlers import RotatingFileHandler
+from ss_models import DatabaseSession
 import socket
 import subprocess
 from app_package.bp_main.utilities import read_syslog_into_list, get_nginx_info, \
@@ -13,24 +12,35 @@ from flask_login import login_required, login_user, logout_user, current_user
 import glob
 import pandas as pd
 import json
+from app_package._common.utilities import custom_logger, wrap_up_session
 
-
+logger_bp_main = custom_logger('bp_main.log')
 bp_main = Blueprint('bp_main', __name__)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
-formatter_terminal = logging.Formatter('%(asctime)s:%(filename)s:%(name)s:%(message)s')
 
-logger_bp_main = logging.getLogger(__name__)
-logger_bp_main.setLevel(logging.DEBUG)
+@bp_main.before_request
+def before_request():
+    logger_bp_main.info("-- def before_request() --")
 
-file_handler = RotatingFileHandler(os.path.join(os.environ.get('PROJECT_ROOT'),'logs','main_routes.log'), mode='a', maxBytes=5*1024*1024,backupCount=2)
-file_handler.setFormatter(formatter)
+    # Assign a new session to a global `g` object, accessible during the whole request
+    g.db_session = DatabaseSession()
+    
+    # Use getattr to safely access g.referrer, defaulting to None if it's not set
+    if getattr(g, 'referrer', None) is None:
+        if request.referrer:
+            g.referrer = request.referrer
+        else:
+            g.referrer = "No referrer"
+    
+    logger_bp_main.info("-- def before_request() END --")
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter_terminal)
 
-logger_bp_main.addHandler(file_handler)
-logger_bp_main.addHandler(stream_handler)
+@bp_main.after_request
+def after_request(response):
+    logger_bp_main.info(f"---- after_request --- ")
+    if hasattr(g, 'db_session'):
+        wrap_up_session(logger_bp_main, g.db_session)
+    return response
 
 
 @bp_main.route("/", methods=["GET","POST"])
@@ -39,17 +49,56 @@ def home():
     hostname = socket.gethostname()
     return render_template('main/home.html', hostname=hostname)
 
-# Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
-@bp_main.route('/get_aux_file_from_dir/<aux_dir_name>/<filename>')
-def get_aux_file_from_dir(aux_dir_name, filename):
-    logger_bp_main.info(f"- in get_aux_file_from_dir route")
-    return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name), filename)
+# ###### OLD #######################
+# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
+# @bp_main.route('/get_aux_file_from_dir/<aux_dir_name>/<filename>')
+# def get_aux_file_from_dir(aux_dir_name, filename):
+#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
+#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name), filename)
 
-# Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
-@bp_main.route('/get_aux_images/<aux_dir_name>/<image_dir>/<filename>')
-def get_aux_images(aux_dir_name,image_dir, filename):
-    logger_bp_main.info(f"- in get_aux_file_from_dir route")
-    return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name,image_dir), filename)
+# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
+# @bp_main.route('/get_aux_images/<aux_dir_name>/<image_dir>/<filename>')
+# def get_aux_images(aux_dir_name,image_dir, filename):
+#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
+#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name,image_dir), filename)
+# ###### OLD #######################
+
+
+
+# Website Assets static data
+@bp_main.route('/website_assets_favicon/<filename>')
+def website_assets_favicon(filename):
+    logger_bp_main.info("-- in website_assets_favicon -")
+    dir = current_app.config.get('DIR_ASSETS_FAVICONS')
+    logger_bp_main.info(f"serving file: {os.path.join(dir, filename)}")
+
+    return send_from_directory(dir, filename)
+
+# Website Assets static data
+@bp_main.route('/website_assets_images/<filename>')
+def website_assets_images(filename):
+    logger_bp_main.info("-- in website_assets_images -")
+    dir = current_app.config.get('DIR_ASSETS_IMAGES')
+    logger_bp_main.info(f"serving file: {os.path.join(dir, filename)}")
+
+    return send_from_directory(dir, filename)
+
+# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
+# @bp_main.route('/get_aux_file_from_dir/<aux_dir_name>/<filename>')
+# def get_aux_file_from_dir(aux_dir_name, filename):
+#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
+#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name), filename)
+
+# # Custom static data - DIR_DB_AUXILARY (/_databases/dashAndData07/auxilary/<aux_dir_name>/<filename>)
+# @bp_main.route('/get_aux_images/<aux_dir_name>/<image_dir>/<filename>')
+# def get_aux_images(aux_dir_name,image_dir, filename):
+#     logger_bp_main.info(f"- in get_aux_file_from_dir route")
+#     return send_from_directory(os.path.join(current_app.config.get('DIR_DB_AUXILARY'), aux_dir_name,image_dir), filename)
+
+
+
+
+
 
 
 @bp_main.route('/server_syslog')
@@ -60,8 +109,8 @@ def server_syslog():
     hostname = socket.gethostname()
     syslog_file = '/var/log/syslog'
 
-    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
-        syslog_file = current_app.config.get('LOCAL_TEST_DATA_PATH') + syslog_file
+    if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
+        syslog_file =os.path.join( current_app.config.get('WORKSTATION_TEST_DATA_PATH'),"syslog")
 
     sys_log_list = read_syslog_into_list(syslog_file)
 
@@ -81,8 +130,8 @@ def nginx_servers():
     # if os.environ.get('FLASK_CONFIG_TYPE') == "prod":
     config_files = glob.glob(conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
     # nginx_servers_json_list = get_nginx_info(config_files)
-    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
-        config_files = glob.glob(current_app.config.get('LOCAL_TEST_DATA_PATH') + conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
+    if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
+        config_files = glob.glob(current_app.config.get('WORKSTATION_TEST_DATA_PATH') + conf_file_path + '*.conf')  # get all .conf files in /etc/nginx/conf.d/
         
     nginx_servers_json_list = get_nginx_info(config_files)
 
@@ -91,11 +140,11 @@ def nginx_servers():
         "Web addresses": [', '.join(info['server_names']) for info in nginx_servers_json_list]
     }
 
-    proxy_port_file = os.path.join(current_app.config.get('DIR_DB_AUXILARY'), "proxy_port.json")
+    
 
     # create dataframe
-    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
-        logger_bp_main.info("---> FLASK_CONFIG_TYPE is NOT local <------")
+    if os.environ.get('FLASK_CONFIG_TYPE') != "workstation":
+        logger_bp_main.info("---> FLASK_CONFIG_TYPE is NOT workstation <------")
         df = pd.DataFrame(data)
         # sort dataframe by "Proxy Port"
         df["Proxy Port"] = pd.to_numeric(df["Proxy Port"])  # convert "Proxy Port" to numeric so it sorts correctly
@@ -112,7 +161,8 @@ def nginx_servers():
         # logger_bp_main.info(f"df_dict.keys(): {df_dict.keys()}")
         logger_bp_main.info(f"df_dict[0]: {df_dict[0]}")
     else:
-        logger_bp_main.info("---> FLASK_CONFIG_TYPE is local <------")
+        proxy_port_file = os.path.join(current_app.config.get('WORKSTATION_TEST_DATA_PATH'), "proxy_port.json")
+        logger_bp_main.info("---> FLASK_CONFIG_TYPE is workstation <------")
         with open(proxy_port_file, 'r') as pp_file:
             df_dict = json.load(pp_file)
 
@@ -136,7 +186,7 @@ def running_services():
     
     hostname = socket.gethostname()
 
-    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+    if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
         # system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/SpeedyProd10/"
         system_file_path = "/Users/nick/Documents/_testData/ServerStatusWebsite/"
         file_name = "system.txt"
@@ -158,7 +208,7 @@ def running_services():
 
     services_df = merge_and_sort_dfs(terminal_services_df, service_files_df)
 
-    if os.environ.get('FLASK_CONFIG_TYPE') == "local":
+    if os.environ.get('FLASK_CONFIG_TYPE') == "workstation":
         services_df.to_csv(os.path.join(system_file_path,'services_df.csv'))
 
     # Apply the function to each row in the 'Unit' column and create the 'start_stop' column
@@ -192,7 +242,7 @@ def manage_service():
     else:
         status = 'start'
 
-    if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+    if os.environ.get('FLASK_CONFIG_TYPE') != "workstation":
         # Validate the status argument
         if status not in ['start', 'stop']:
             return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400
@@ -221,7 +271,7 @@ def manage_service():
 # def manage_whatsticks10api_dev():
 
 #     status = request.args.get('status', None)
-#     if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+#     if os.environ.get('FLASK_CONFIG_TYPE') != "workstation":
 #         # Validate the status argument
 #         if status not in ['start', 'stop']:
 #             return jsonify({"error": "Invalid status. Please use 'start' or 'stop'."}), 400

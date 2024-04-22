@@ -21,15 +21,34 @@
   <!-- Your custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <!-- for LinkedIn -->
-    <meta property="og:description" content="Server status website for dash and data apps on Venturer machine" />
-    <meta name="image" property="og:image"
-    content="{{ url_for('bp_main.get_aux_file_from_dir',aux_dir_name='images', filename='LogoForLinkedIn-1200x627.png') }}"
-    />
-    <!-- try for iPhone  shortcut -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('bp_main.get_aux_images',aux_dir_name='images',image_dir='favicon_Ubuntu', filename='apple-touch-icon.png') }}">
-    <!-- favicon - image on tabs of browser pages-->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('bp_main.get_aux_images',aux_dir_name='images',image_dir='favicon_Ubuntu', filename='favicon-32x32.png') }}">
+
+  <!-- LinkedIn Links -->
+  <meta name="theme-color" content="#000000">
+  <meta 
+  property="og:title"
+  content="Server Status"
+/><meta 
+  name="image"
+  property="og:image"
+  content="{{ url_for('bp_main.website_assets_favicon', filename='LogoForLinkedIn-1200x627.png') }}"
+/><meta 
+  name="author"
+  content="Nick Rodriguez"
+/><meta 
+  property="og:description"
+  content="Server status website for dash and data apps on a NWS machine."
+/>
+  <!-- icon for iPhone  shortcut -->
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('bp_main.website_assets_favicon', filename='apple-touch-icon.png') }}">
+  <!-- favicon - image on tabs of browser pages-->
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('bp_main.website_assets_favicon', filename='database03-16x16.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('bp_main.website_assets_favicon', filename='favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('bp_main.website_assets_favicon', filename='database03-64x64.png') }}">
+  <!-- it seems this svg takes priority but it doesnt look good. We'll keep it here just for reference-->
+  <!-- <link rel="icon"  type="image/svg+xml" href="{{ url_for('bp_main.website_assets_favicon', filename='database03.svg') }}">-->
+
+
+
 
   <title>Server Status </title>
 </head>

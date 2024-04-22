@@ -14,7 +14,7 @@ Users can login and see the syslog and a table with all the service files and th
 To install the ServerStatusWebsite, you will also need ServerStatusWebsite_modules. Clone the repository and install:
 ```
 git clone [repository-url]
-cd ServerStatusWebsite_modules
+cd ServerStatusWebsiteLibrary
 pip install -e .
 ```
 

@@ -5,7 +5,7 @@ import subprocess
 # import os
 import pandas as pd
 from flask import current_app
-if os.environ.get('FLASK_CONFIG_TYPE') != "local":
+if os.environ.get('FLASK_CONFIG_TYPE') != "workstation":
     from systemd import journal
 
 def read_syslog_into_list(syslog_file):

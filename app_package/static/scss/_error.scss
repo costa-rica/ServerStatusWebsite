@@ -1,0 +1,10 @@
+.error_page {
+    display: flex;
+    justify-content: center;
+    width:100%;
+    color:var(--color_text_white);
+    padding-top:var(--nav-height);
+    .col_1 {
+        width:calc(100% - 10rem)
+    }
+}

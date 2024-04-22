@@ -370,6 +370,17 @@ section.about_main a:hover {
     width: 80%;
   }
 }
+.error_page {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: var(--color_text_white);
+  padding-top: var(--nav-height);
+}
+.error_page .col_1 {
+  width: calc(100% - 10rem);
+}
+
 :root {
   --nav-height: 123px;
   --website_theme_font_color_light: white;
