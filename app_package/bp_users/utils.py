@@ -34,14 +34,15 @@ If you did not make this request, ignore email and there will be no change
 
 
 def send_confirm_email(email):
-    if os.environ.get('CONFIG_TYPE') == 'prod':
-        logger_bp_users.info(f"-- sending email to {email} --")
-        msg = Message('Welcome to Dashboards and Databases',
-            sender=current_app.config.get('MAIL_USERNAME'),
-            recipients=[email])
-        msg.body = 'You have succesfully signed up.'
-        mail.send(msg)
-        logger_bp_users.info(f"-- email sent --")
+    if os.environ.get('FLASK_CONFIG_TYPE') == 'prod':
+        if email not in os.environ.get('LIST_NO_CONFIRMASTION_EMAILS'):
+            logger_bp_users.info(f"-- sending email to {email} --")
+            msg = Message('Welcome to Dashboards and Databases',
+                sender=current_app.config.get('MAIL_USERNAME'),
+                recipients=[email])
+            msg.body = 'You have succesfully signed up.'
+            mail.send(msg)
+            logger_bp_users.info(f"-- email sent --")
     else :
         logger_bp_users.info(f"-- Non prod mode, no email sent --")
 

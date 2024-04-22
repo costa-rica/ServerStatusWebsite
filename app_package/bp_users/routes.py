@@ -153,7 +153,11 @@ def register():
         hash_pw = bcrypt.hashpw(formDict.get('password').encode(), salt)
         new_user = Users(email = new_email, password = hash_pw)
         db_session.add(new_user)
-        db_session.flush()
+        try:
+            db_session.commit()
+        except:
+            db_session.rollback()
+
 
         try:
             send_confirm_email(new_email)
