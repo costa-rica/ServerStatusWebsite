@@ -54,8 +54,9 @@ def custom_logger(logger_filename):
     full_log_path = os.path.join(path_to_logs, logger_filename)
 
     # Formatter setup
-    formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
-    formatter_terminal = logging.Formatter('%(asctime)s:%(filename)s:%(name)s:%(message)s')
+    app_name = "ServerStatusWeb"
+    formatter = logging.Formatter(f'%(asctime)s:{app_name}:%(name)s:%(message)s')
+    formatter_terminal = logging.Formatter(f'%(asctime)s:{app_name}:%(filename)s:%(name)s:%(message)s')
 
     # Logger setup
     logger = logging.getLogger(logger_filename)  # Use the filename as the logger's name
@@ -79,8 +80,9 @@ def custom_logger_init():
 
     logging.Formatter.converter = timetz
 
-    formatter = logging.Formatter('%(asctime)s:%(name)s:%(message)s')
-    formatter_terminal = logging.Formatter('%(asctime)s:%(filename)s:%(name)s:%(message)s')
+    app_name = "ServerStatusWeb"
+    formatter = logging.Formatter(f'%(asctime)s:{app_name}:%(name)s:%(message)s')
+    formatter_terminal = logging.Formatter(f'%(asctime)s:{app_name}:%(filename)s:%(name)s:%(message)s')
 
     logger_init = logging.getLogger('__init__')
     logger_init.setLevel(logging.DEBUG)
